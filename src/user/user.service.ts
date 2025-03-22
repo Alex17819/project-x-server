@@ -1,14 +1,30 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { AuthDto } from "../auth/dto/auth.dto";
+import { Role } from "@prisma/client";
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
-  async createUser(email: string, hashedPassword: string) {
+  async createUser({
+    email,
+    hashedPassword,
+    role,
+  }: {
+    email: string;
+    hashedPassword: string;
+    role: Role;
+  }) {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
+
+    if (role === Role.ADMIN) {
+      throw new ForbiddenException("Access Denied");
+    }
 
     if (user) {
       throw new BadRequestException("The user already exists");
@@ -18,6 +34,7 @@ export class UserService {
       data: {
         email,
         password: hashedPassword,
+        role,
       },
     });
   }

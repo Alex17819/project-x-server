@@ -6,7 +6,7 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import * as argon2 from "argon2";
 import { ConfigService } from "@nestjs/config";
-import { AuthDto } from "./dto/auth.dto";
+import { BaseAuthDto, RegisterDto } from "./dto/auth.dto";
 import { UserService } from "../user/user.service";
 import { RefreshAccessTokenDto } from "./dto/refresh-access-token.dto";
 
@@ -56,17 +56,18 @@ export class AuthService {
     return { accessToken };
   }
 
-  async register(registerDto: AuthDto) {
+  async register(registerDto: RegisterDto) {
     const hashedPassword = await this.hashPassword(registerDto.password);
-    const user = await this.userService.createUser(
-      registerDto.email,
+    const user = await this.userService.createUser({
+      email: registerDto.email,
       hashedPassword,
-    );
+      role: registerDto.role,
+    });
 
     return this.generateTokens(user.id);
   }
 
-  async login(authDto: AuthDto) {
+  async login(authDto: BaseAuthDto) {
     const user = await this.userService.findUserByEmail(authDto.email);
 
     const isPasswordCorrect = await this.comparePasswords(
