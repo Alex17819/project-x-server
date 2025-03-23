@@ -88,7 +88,8 @@ export class AuthService {
         secret: this.configService.get("JWT_REFRESH_SECRET"),
       });
     } catch (error) {
-      throw new UnauthorizedException("Invalid refresh token");
+      // TODO: Replace with exception when front end interceptor will work correctly
+      throw new Error("Invalid refresh token");
     }
   }
 
