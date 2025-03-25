@@ -58,13 +58,21 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const hashedPassword = await this.hashPassword(registerDto.password);
+
     const user = await this.userService.createUser({
       email: registerDto.email,
       hashedPassword,
       role: registerDto.role,
     });
 
-    return this.generateTokens(user.id);
+    const tokens = await this.generateTokens(user.id);
+
+    await this.userService.updateUser({
+      refreshToken: tokens.refreshToken,
+      email: user.email,
+    });
+
+    return tokens;
   }
 
   async login(authDto: BaseAuthDto) {
@@ -95,6 +103,13 @@ export class AuthService {
 
   async refreshAccessToken({ refreshToken }: RefreshAccessTokenDto) {
     const payload = await this.validateRefreshToken(refreshToken);
+
+    const user = await this.userService.getUserById(payload.sub);
+
+    if (user.refreshToken !== refreshToken) {
+      throw new UnauthorizedException("Different refresh tokens");
+    }
+
     return this.generateAccessToken(payload.sub);
   }
 }

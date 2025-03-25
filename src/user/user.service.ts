@@ -39,9 +39,40 @@ export class UserService {
     });
   }
 
+  async updateUser(data: {
+    email?: string;
+    hashedPassword?: string;
+    role?: Role;
+    refreshToken?: string;
+  }) {
+    return this.prisma.user.update({
+      data: {
+        refreshToken: data.refreshToken,
+      },
+      where: { email: data.email },
+    });
+  }
+
   async findUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
+    });
+
+    if (!user) {
+      throw new BadRequestException("The user does not exists");
+    }
+
+    return user;
+  }
+
+  async getUserById(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        projects: {},
+      },
     });
 
     if (!user) {
