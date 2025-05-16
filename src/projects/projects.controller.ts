@@ -27,6 +27,16 @@ export class ProjectsController {
     return this.projectsService.getProjects(user?.userId);
   }
 
+  @Get(":id")
+  @UseGuards(JwtAuthGuard)
+  async getProjectData(
+    @Req() req: Request,
+    @Param("id", ParseIntPipe) id: number,
+  ) {
+    const user = req.user as { userId: number };
+    return this.projectsService.getProjectData(user?.userId, id);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.TEACHER)

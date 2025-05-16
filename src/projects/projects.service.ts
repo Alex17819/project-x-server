@@ -14,6 +14,15 @@ export class ProjectsService {
     });
   }
 
+  async getProjectData(userId: number, projectId: number) {
+    return this.prisma.project.findFirst({
+      where: {
+        id: projectId,
+        userId,
+      },
+    });
+  }
+
   async createProject(createProjectDto: CreateProjectDto, userId: number) {
     return this.prisma.project.create({
       data: {
