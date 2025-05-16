@@ -87,7 +87,14 @@ export class AuthService {
       throw new UnauthorizedException("Invalid credentials");
     }
 
-    return this.generateTokens(user.id);
+    const tokens = await this.generateTokens(user.id);
+
+    await this.userService.updateUser({
+      email: user.email,
+      refreshToken: tokens.refreshToken,
+    });
+
+    return tokens;
   }
 
   async validateRefreshToken(refreshToken: string) {
@@ -97,7 +104,7 @@ export class AuthService {
       });
     } catch (error) {
       // TODO: Replace with exception when front end interceptor will work correctly
-      throw new Error("Invalid refresh token");
+      throw new UnauthorizedException("Invalid refresh token");
     }
   }
 

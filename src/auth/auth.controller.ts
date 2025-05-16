@@ -46,8 +46,43 @@ export class AuthController {
   }
 
   @Post("login")
-  async login(@Body() authDto: BaseAuthDto) {
-    return await this.authService.login(authDto);
+  async login(@Body() authDto: BaseAuthDto, @Res() response: Response) {
+    const { accessToken, refreshToken } = await this.authService.login(authDto);
+
+    response.cookie("access_token", accessToken, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 15,
+      sameSite: "strict",
+      path: "/",
+    });
+
+    response.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      sameSite: "strict",
+      path: "/",
+    });
+
+    return response.json({
+      message: "Successfully entered",
+    });
+  }
+
+  @Post("logout")
+  async logout(@Res() response: Response) {
+    response.clearCookie("access_token", {
+      httpOnly: true,
+      path: "/",
+      sameSite: "strict",
+    });
+
+    response.clearCookie("refresh_token", {
+      httpOnly: true,
+      path: "/",
+      sameSite: "strict",
+    });
+
+    return response.json({ message: "Successfully logged out" });
   }
 
   @Get("protected")

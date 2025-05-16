@@ -34,7 +34,7 @@ export class UserService {
       data: {
         email,
         password: hashedPassword,
-        role,
+        roles: [role],
       },
     });
   }
@@ -46,9 +46,7 @@ export class UserService {
     refreshToken?: string;
   }) {
     return this.prisma.user.update({
-      data: {
-        refreshToken: data.refreshToken,
-      },
+      data,
       where: { email: data.email },
     });
   }

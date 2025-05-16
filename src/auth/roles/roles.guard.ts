@@ -28,7 +28,7 @@ export class RolesGuard implements CanActivate {
       where: { id: request.user.userId },
     });
 
-    if (!user || !requiredRoles.includes(user.role)) {
+    if (!user || !user.roles.some((role) => requiredRoles.includes(role))) {
       throw new ForbiddenException("Access Denied");
     }
 
