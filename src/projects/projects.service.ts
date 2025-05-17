@@ -31,4 +31,20 @@ export class ProjectsService {
       },
     });
   }
+
+  async updateProject(
+    createProjectDto: CreateProjectDto,
+    userId: number,
+    projectId: number,
+  ) {
+    return this.prisma.project.update({
+      where: {
+        id: projectId,
+        userId,
+      },
+      data: {
+        blocks: createProjectDto.blocks,
+      },
+    });
+  }
 }

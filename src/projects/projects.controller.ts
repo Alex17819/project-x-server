@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Req,
   UseGuards,
 } from "@nestjs/common";
@@ -15,6 +16,7 @@ import { Request } from "express";
 import { Roles } from "../auth/roles/roles.decorator";
 import { Role } from "@prisma/client";
 import { RolesGuard } from "../auth/roles/roles.guard";
+import { UpdateProjectDto } from "./dto/update-project.dto";
 
 @Controller("projects")
 export class ProjectsController {
@@ -48,6 +50,22 @@ export class ProjectsController {
     return await this.projectsService.createProject(
       createProjectDto,
       user?.userId,
+    );
+  }
+
+  @Put(":id")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.TEACHER)
+  async updateProject(
+    @Body() updateProjectDto: UpdateProjectDto,
+    @Req() req: Request,
+    @Param("id", ParseIntPipe) id: number,
+  ) {
+    const user = req.user as { userId: number };
+    return await this.projectsService.updateProject(
+      updateProjectDto,
+      user?.userId,
+      id,
     );
   }
 }
