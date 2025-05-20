@@ -17,6 +17,8 @@ import { Roles } from "../auth/roles/roles.decorator";
 import { Role } from "@prisma/client";
 import { RolesGuard } from "../auth/roles/roles.guard";
 import { UpdateProjectDto } from "./dto/update-project.dto";
+import { ShareProjectDto } from "./dto/share-project.dto";
+import { UserService } from "../user/user.service";
 
 @Controller("projects")
 export class ProjectsController {
@@ -49,6 +51,20 @@ export class ProjectsController {
     const user = req.user as { userId: number };
     return await this.projectsService.createProject(
       createProjectDto,
+      user?.userId,
+    );
+  }
+
+  @Post("/share")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.TEACHER)
+  async shareProject(
+    @Body() shareProjectDto: ShareProjectDto,
+    @Req() req: Request,
+  ) {
+    const user = req.user as { userId: number };
+    return await this.projectsService.shareProject(
+      shareProjectDto,
       user?.userId,
     );
   }
