@@ -18,7 +18,6 @@ export class FilesController {
     @Body() uploadFileDto: UploadFileDto,
     @Req() request: Request,
   ) {
-    console.log(request.user);
     return await this.fileService.uploadFile(uploadFileDto);
   }
 

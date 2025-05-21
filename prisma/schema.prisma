@@ -22,6 +22,7 @@ model User {
   roles        Role[]        @default([])
   projects     Project[]     @relation("UserProjects")
   ProjectUser  ProjectUser[]
+  userResults  UserResult[]
 }
 
 enum Role {
@@ -37,6 +38,7 @@ model Project {
   isPublic    Boolean       @default(false)
   createdBy   Int?
   ProjectUser ProjectUser[]
+  results     UserResult[]
 }
 
 model ProjectUser {
@@ -48,4 +50,17 @@ model ProjectUser {
   assignedBy String
 
   @@id([userId, projectId])
+}
+
+model UserResult {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  projectId Int
+  user      User     @relation(fields: [userId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id])
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, projectId])
 }

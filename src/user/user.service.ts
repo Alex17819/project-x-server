@@ -70,6 +70,11 @@ export class UserService {
       },
       include: {
         projects: {},
+        ProjectUser: {
+          include: {
+            project: true,
+          },
+        },
       },
     });
 

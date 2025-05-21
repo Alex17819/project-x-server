@@ -37,9 +37,8 @@ export class ProjectsController {
     @Req() req: Request,
     @Param("id", ParseIntPipe) id: number,
   ) {
-    console.log("GET DATA");
     const user = req.user as { userId: number };
-    return this.projectsService.getProjectData2(id);
+    return this.projectsService.getTestResults(user.userId, id);
   }
 
   @Post()
@@ -62,7 +61,6 @@ export class ProjectsController {
     @Body() shareProjectDto: ShareProjectDto,
     @Req() req: Request,
   ) {
-    console.log(shareProjectDto);
     const user = req.user as { userId: number };
     return await this.projectsService.shareProject(
       shareProjectDto,
@@ -78,10 +76,10 @@ export class ProjectsController {
     @Param("id", ParseIntPipe) id: number,
   ) {
     const user = req.user as { userId: number };
-    return await this.projectsService.updateProject(
-      updateProjectDto,
+    return await this.projectsService.saveTestResults(
       user?.userId,
       id,
+      updateProjectDto.blocks,
     );
   }
 

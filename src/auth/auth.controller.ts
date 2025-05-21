@@ -28,7 +28,7 @@ export class AuthController {
 
     response.cookie("access_token", accessToken, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 15,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
       sameSite: "strict",
       path: "/",
     });
@@ -51,7 +51,7 @@ export class AuthController {
 
     response.cookie("access_token", accessToken, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 15,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
       sameSite: "strict",
       path: "/",
     });
