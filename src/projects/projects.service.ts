@@ -2,14 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateProjectDto } from "./dto/create-project-dto";
 import { ShareProjectDto } from "./dto/share-project.dto";
-import { UserService } from "../user/user.service";
 
 @Injectable()
 export class ProjectsService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getProjects(userId: number) {
     return this.prisma.project.findMany({
@@ -36,10 +32,19 @@ export class ProjectsService {
     });
   }
 
+  async getProjectData2(projectId: number) {
+    return this.prisma.project.findFirst({
+      where: {
+        id: projectId,
+      },
+    });
+  }
+
   async createProject(createProjectDto: CreateProjectDto, userId: number) {
     return this.prisma.project.create({
       data: {
         blocks: createProjectDto.blocks,
+        createdBy: userId,
         users: {
           connect: [{ id: userId }],
         },
@@ -50,7 +55,14 @@ export class ProjectsService {
   async shareProject(shareProjectDto: ShareProjectDto, userId: number) {
     const { userId: userToShareId, projectId } = shareProjectDto;
 
-    const projectToShare = await this.getProjectData(userId, Number(projectId));
+    console.log(userId, userToShareId);
+
+    const projectToShare = await this.getProjectData(
+      +userId,
+      Number(projectId),
+    );
+
+    const projectToShare2 = await this.getProjectData2(Number(projectId));
 
     return this.prisma.user.update({
       where: {
@@ -59,7 +71,7 @@ export class ProjectsService {
       data: {
         projects: {
           connect: {
-            id: projectToShare?.id,
+            id: projectToShare2?.id,
           },
         },
       },
@@ -90,6 +102,18 @@ export class ProjectsService {
       },
       data: {
         blocks: createProjectDto.blocks,
+      },
+    });
+  }
+
+  async publishProject(userId: number, projectId: number) {
+    return this.prisma.project.update({
+      where: {
+        id: projectId,
+        createdBy: userId,
+      },
+      data: {
+        isPublic: true,
       },
     });
   }

@@ -34,6 +34,8 @@ model Project {
   id          Int           @id @default(autoincrement())
   users       User[]        @relation("UserProjects")
   blocks      Json?
+  isPublic    Boolean       @default(false)
+  createdBy   Int?
   ProjectUser ProjectUser[]
 }
 

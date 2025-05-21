@@ -37,8 +37,9 @@ export class ProjectsController {
     @Req() req: Request,
     @Param("id", ParseIntPipe) id: number,
   ) {
+    console.log("GET DATA");
     const user = req.user as { userId: number };
-    return this.projectsService.getProjectData(user?.userId, id);
+    return this.projectsService.getProjectData2(id);
   }
 
   @Post()
@@ -56,12 +57,12 @@ export class ProjectsController {
   }
 
   @Post("/share")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.TEACHER)
+  @UseGuards(JwtAuthGuard)
   async shareProject(
     @Body() shareProjectDto: ShareProjectDto,
     @Req() req: Request,
   ) {
+    console.log(shareProjectDto);
     const user = req.user as { userId: number };
     return await this.projectsService.shareProject(
       shareProjectDto,
@@ -70,8 +71,7 @@ export class ProjectsController {
   }
 
   @Put(":id")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.TEACHER)
+  @UseGuards(JwtAuthGuard)
   async updateProject(
     @Body() updateProjectDto: UpdateProjectDto,
     @Req() req: Request,
@@ -83,5 +83,16 @@ export class ProjectsController {
       user?.userId,
       id,
     );
+  }
+
+  @Put("/publish/:id")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.TEACHER)
+  async publishProject(
+    @Req() req: Request,
+    @Param("id", ParseIntPipe) id: number,
+  ) {
+    const user = req.user as { userId: number };
+    return await this.projectsService.publishProject(user?.userId, id);
   }
 }
