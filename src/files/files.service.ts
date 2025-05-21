@@ -25,12 +25,14 @@ export class FilesService {
       .catch(() => false);
 
     if (fileExists) {
-      throw new ConflictException("File with that filename already exists");
+      throw new ConflictException(
+        "Fișierul cu acest nume de fișier există deja",
+      );
     }
 
     await fs.writeFile(filePath, base64, "base64");
 
-    return { message: "File successfully uploaded", filePath };
+    return { message: "Fișier încărcat cu succes", filePath };
   }
 
   async getFileLinks() {

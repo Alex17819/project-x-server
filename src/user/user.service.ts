@@ -23,11 +23,11 @@ export class UserService {
     });
 
     if (role === Role.ADMIN) {
-      throw new ForbiddenException("Access Denied");
+      throw new ForbiddenException("Acces respins");
     }
 
     if (user) {
-      throw new BadRequestException("The user already exists");
+      throw new BadRequestException("Utilizatorul există deja");
     }
 
     return this.prisma.user.create({
@@ -57,7 +57,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new BadRequestException("The user does not exists");
+      throw new BadRequestException("Utilizatorul există deja");
     }
 
     return user;

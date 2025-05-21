@@ -41,7 +41,7 @@ export class AuthController {
     });
 
     return response.json({
-      message: "Successfully registered",
+      message: "Înregistrat cu succes",
     });
   }
 
@@ -64,7 +64,7 @@ export class AuthController {
     });
 
     return response.json({
-      message: "Successfully entered",
+      message: "Logat cu succes",
     });
   }
 
@@ -82,7 +82,7 @@ export class AuthController {
       sameSite: "strict",
     });
 
-    return response.json({ message: "Successfully logged out" });
+    return response.json({ message: "Deconectat cu succes" });
   }
 
   @Get("protected")
